@@ -206,10 +206,10 @@ void draw() {
   circles.add(leftBottom);
   circles.add(rightBottom);
 
-  if (mouseX >= (logoX - logoZ) && mouseX < (logoX + logoZ) && mouseY >= (logoY - logoZ) && mouseY < (logoY + logoZ))
-    editMode = true;
-  else
-    editMode = false;
+  //if (mouseX >= (logoX - logoZ) && mouseX < (logoX + logoZ) && mouseY >= (logoY - logoZ) && mouseY < (logoY + logoZ))
+  //  editMode = true;
+  //else
+  //  editMode = false;
   
 
   //if (editMode)
@@ -319,6 +319,23 @@ void mousePressed()
   //  }
   //}
   //println();
+  
+  if (insideLogo (mouseX, mouseY))
+    editMode = true;
+  else
+  {
+    boolean notInCircle = true;
+    if (insideButton (mouseX, mouseY))
+      notInCircle = false;
+    for (Circle c : circles)
+    {
+      if (insideCircle (mouseX, mouseY, c))
+        notInCircle = false;
+    }
+    if (notInCircle)
+      editMode = false;
+  }
+  
      
   if (insideLogo (mouseX, mouseY))
   {
