@@ -21,6 +21,28 @@ float logoY = 500;
 float logoZ = 50f;
 float logoRotation = 0;
 
+
+// ******************** Added Start
+float targetX = 0;
+float targetY = 0;
+float targetRot = 0;
+float targetSize = 0;
+
+float currX = 0;
+float currY = 0;
+
+boolean rotCorrect = false;
+boolean sizeCorrect = false;
+boolean posCorrect = false;
+
+boolean followMouse = false;
+
+float submitX = 975;
+float submitY = 400;
+float submitWidth = 100;
+float submitHeight = 200;
+// ******************** Added End
+
 private class Destination
 {
   float x = 0;
@@ -64,6 +86,14 @@ void draw() {
   fill(200);
   noStroke();
 
+  // ******************** Added Start
+  if (followMouse) {
+     logoX = mouseX;
+     logoY = mouseY;
+  }
+  // ******************** Added End
+
+
   //shouldn't really modify this printout code unless there is a really good reason to
   if (userDone)
   {
@@ -83,8 +113,13 @@ void draw() {
     rotate(radians(d.rotation)); //rotate around the origin of the destination trial
     noFill();
     strokeWeight(3f);
-    if (trialIndex==i)
+    if (trialIndex==i) {
       stroke(255, 0, 0, 192); //set color to semi translucent
+      targetX = d.x;
+      targetY = d.y;
+      targetRot = (d.rotation + 360) % 90;
+      targetSize = d.z;
+    }
     else
       stroke(128, 128, 128, 128); //set color to semi translucent
     rect(0, 0, d.z, d.z);
@@ -92,63 +127,56 @@ void draw() {
   }
 
   //===========DRAW LOGO SQUARE=================
+  Destination d = destinations.get(trialIndex);  
+  posCorrect = dist(d.x, d.y, logoX, logoY)<inchToPix(.05f); //has to be within +-0.05"
   pushMatrix();
   translate(logoX, logoY); //translate draw center to the center oft he logo square
   rotate(radians(logoRotation)); //rotate using the logo square as the origin
   noStroke();
-  fill(60, 60, 192, 192);
+  if (posCorrect)
+    fill(0, 255, 0, 100);
+  else
+    fill(60, 60, 192, 192);
   rect(0, 0, logoZ, logoZ);
   popMatrix();
 
   //===========DRAW EXAMPLE CONTROLS=================
   fill(255);
-  scaffoldControlLogic(); //you are going to want to replace this!
   text("Trial " + (trialIndex+1) + " of " +trialCount, width/2, inchToPix(.8f));
+  
+  text("X: " + int(targetX) + " Y: " + int(targetY) + " rot: " + int(targetRot) + " size: " + int(targetSize), width/2, height/2);
+  text("X: " + int(logoX) + " Y: " + int(logoY) + " rot: " + int((logoRotation + 360) % 90) + " size: " + int(logoZ), width/2, height/2 + 20);
+  
+  if (rotCorrect)
+    fill(0, 255, 0, 100);
+  else
+    fill(255, 0, 0, 100); 
+  rect(width/2, 100, width, 200);
+  
+  if (sizeCorrect)
+    fill(0, 255, 0, 100);
+  else
+    fill(255, 0, 0, 100); 
+  rect(width/2, 700, width, 200);
+  
+  fill(0, 255, 0);
+  rect(submitX, submitY, submitWidth, submitHeight);
 }
 
 //my example design for control, which is terrible
 void scaffoldControlLogic()
 {
-  //upper left corner, rotate counterclockwise
-  text("CCW", inchToPix(.4f), inchToPix(.4f));
-  if (mousePressed && dist(0, 0, mouseX, mouseY)<inchToPix(.8f))
-    logoRotation--;
-
-  //upper right corner, rotate clockwise
-  text("CW", width-inchToPix(.4f), inchToPix(.4f));
-  if (mousePressed && dist(width, 0, mouseX, mouseY)<inchToPix(.8f))
-    logoRotation++;
-
-  //lower left corner, decrease Z
-  text("-", inchToPix(.4f), height-inchToPix(.4f));
-  if (mousePressed && dist(0, height, mouseX, mouseY)<inchToPix(.8f))
-    logoZ = constrain(logoZ-inchToPix(.02f), .01, inchToPix(4f)); //leave min and max alone!
-
-  //lower right corner, increase Z
-  text("+", width-inchToPix(.4f), height-inchToPix(.4f));
-  if (mousePressed && dist(width, height, mouseX, mouseY)<inchToPix(.8f))
-    logoZ = constrain(logoZ+inchToPix(.02f), .01, inchToPix(4f)); //leave min and max alone! 
-
-  //left middle, move left
-  text("left", inchToPix(.4f), height/2);
-  if (mousePressed && dist(0, height/2, mouseX, mouseY)<inchToPix(.8f))
-    logoX-=inchToPix(.02f);
-
-  text("right", width-inchToPix(.4f), height/2);
-  if (mousePressed && dist(width, height/2, mouseX, mouseY)<inchToPix(.8f))
-    logoX+=inchToPix(.02f);
-
-  text("up", width/2, inchToPix(.4f));
-  if (mousePressed && dist(width/2, 0, mouseX, mouseY)<inchToPix(.8f))
-    logoY-=inchToPix(.02f);
-
-  text("down", width/2, height-inchToPix(.4f));
-  if (mousePressed && dist(width/2, height, mouseX, mouseY)<inchToPix(.8f))
-    logoY+=inchToPix(.02f);
 }
 
 void mousePressed()
 {
+  // ******************** Added Start
+  currX = mouseX;
+  currY = mouseY;
+  if (mouseX >= logoX - logoZ && mouseX <= logoX + logoZ && mouseY >= logoY - logoZ && mouseY <= logoY + logoZ) {
+    followMouse = !followMouse;
+  }
+  // ******************** Added End
   if (startTime == 0) //start time on the instant of the first user click
   {
     startTime = millis();
@@ -159,7 +187,8 @@ void mousePressed()
 void mouseReleased()
 {
   //check to see if user clicked middle of screen within 3 inches, which this code uses as a submit button
-  if (dist(width/2, height/2, mouseX, mouseY)<inchToPix(3f))
+  if (mouseX >= submitX - submitWidth && mouseX <= submitX + submitWidth 
+      && mouseY >= submitY - submitHeight && mouseY <= submitY + submitHeight)
   {
     if (userDone==false && !checkForSuccess())
       errorCount++;
@@ -171,8 +200,39 @@ void mouseReleased()
       userDone = true;
       finishTime = millis();
     }
+    
+    posCorrect = false;
+    rotCorrect = false;
+    sizeCorrect = false;
   }
 }
+
+// ******************** Added Start
+void mouseDragged() {
+  //upper left corner, rotate counterclockwise
+  text("CCW", inchToPix(.4f), inchToPix(.4f));
+  if (mouseY < 200) {
+  if (mouseX > currX + 1)
+    logoRotation++;
+  else if (mouseX < currX - 1)
+    logoRotation--;
+  }
+    
+  if (mouseY > 600){
+  if (mouseX > currX + 1)
+    logoZ++;
+  else if (mouseX < currX - 1)
+    logoZ--;
+  }
+   
+  currX = mouseX;
+  currY = mouseY;
+   
+  Destination d = destinations.get(trialIndex);  
+  rotCorrect = calculateDifferenceBetweenAngles(d.rotation, logoRotation)<=5;
+  sizeCorrect = abs(d.z - logoZ)<inchToPix(.1f); //has to be within +-0.1"  
+}
+// ******************** Added End
 
 //probably shouldn't modify this, but email me if you want to for some good reason.
 public boolean checkForSuccess()
