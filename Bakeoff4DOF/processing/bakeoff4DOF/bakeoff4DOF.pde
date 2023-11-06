@@ -18,8 +18,8 @@ boolean canDragButton = false;
 float lastClickTime = 0;
 float rotationX0 = 0;
 float rotationY0 = 0;
-String circleCorner = "";
 boolean showErrorMessage = false;
+Circle thisCircle;
 
 final float doubleClickSpeed = 400; //in ms
 final int screenPPI = 72; //what is the DPI of the screen you are using
@@ -136,6 +136,8 @@ void draw() {
   }
 
   //===========DRAW LOGO SQUARE=================
+  
+  
   if (movingMode && insideBorder (mouseX, mouseY))
   {
     int deltaX = mouseX - pmouseX;
@@ -178,26 +180,15 @@ void draw() {
   }
   
   float circleDist = (float)(Math.sqrt((float)Math.pow(logoZ / 2.0, 2) + (float)Math.pow(logoZ / 2.0, 2)));
-
-  //float cornerX = logoX-logoZ/2.0;
-  //float cornerY = logoY-logoZ/2.0;
+  
+  //float oldX = circles.get(0).x;
+  //float oldY = circles.get(0).y;
   
   float cornerX = logoX - circleDist * (float)Math.cos(radians(logoRotation));
   float cornerY = logoY - circleDist * (float)Math.sin(radians(logoRotation));
   
-  //float cornerX = logoX - (logoZ / 2.0) * (float)Math.sin(radians(logoRotation));
-  //float cornerY = logoY - (logoZ / 2.0) * (float)Math.cos(radians(logoRotation));
-  
-  
-  //Circle leftTop = new Circle(cornerX, cornerY);
-  //Circle rightTop = new Circle(cornerX+logoZ, cornerY);
-  //Circle leftBottom = new Circle(cornerX, cornerY+logoZ);
-  //Circle rightBottom = new Circle(cornerX+logoZ, cornerY+logoZ);
-  
   Circle leftTop = new Circle(logoX + circleDist * (float)Math.sin(radians(logoRotation - 45)), logoY - circleDist * (float)Math.cos(radians(logoRotation - 45)), "leftTop");
   Circle leftBottom = new Circle(logoX - circleDist * (float)Math.sin(radians(logoRotation + 45)), logoY + circleDist * (float)Math.cos(radians(logoRotation + 45)), "leftBottom");
-  
-  
   Circle rightTop = new Circle(logoX + circleDist * (float)Math.cos(radians(logoRotation - 45)), logoY + circleDist * (float)Math.sin(radians(logoRotation - 45)), "rightTop");
   Circle rightBottom = new Circle(logoX + circleDist * (float)Math.cos(radians(logoRotation + 45)), logoY + circleDist * (float)Math.sin(radians(logoRotation + 45)), "rightBottom");
   
@@ -390,7 +381,7 @@ void mousePressed()
       if (insideCircle (mouseX, mouseY, c))
       {
         canDragCorners = true;
-        circleCorner = c.name;
+        thisCircle = c;
       }
     }
     
@@ -439,6 +430,7 @@ void mouseDragged()
   //if mouse in any of the corner icons, change logo sizing based off of any change in mouseX and mouseY
   int deltaX = mouseX - pmouseX;
   int deltaY = mouseY - pmouseY;
+  int deltaXY = Math.min(Math.abs(deltaX), Math.abs(deltaY));
   
   //println(deltaX+" "+deltaY);
   //float percentChange = Math.max(mouseX*1.0/pmouseX, mouseY*1.0/pmouseY);
@@ -481,22 +473,26 @@ void mouseDragged()
   //}
   if (canDragCorners)
   {
-    if (circleCorner == "rightBottom")
+    //if (circleCorner == "rightBottom")
+    if (thisCircle.x >= logoX && thisCircle.y >= logoY)
     {
       oldR = ((float)Math.pow(pmouseX, 2) + (float)Math.pow(pmouseY, 2));
       newR = ((float)Math.pow(mouseX, 2) + (float)Math.pow(mouseY, 2));
     }
-    else if (circleCorner == "rightTop")
+    //else if (circleCorner == "rightTop")
+    else if (thisCircle.x >= logoX && thisCircle.y <= logoY)
     {
       oldR = ((float)Math.pow(pmouseX, 2) + (float)Math.pow(mouseY, 2));
       newR = ((float)Math.pow(mouseX, 2) + (float)Math.pow(pmouseY, 2));
     }
-    else if (circleCorner == "leftBottom")
+    //else if (circleCorner == "leftBottom")
+    else if (thisCircle.x <= logoX && thisCircle.y >= logoY)
     {
       oldR = ((float)Math.pow(mouseX, 2) + (float)Math.pow(pmouseY, 2));
       newR = ((float)Math.pow(pmouseX, 2) + (float)Math.pow(mouseY, 2));
     }
-    else if (circleCorner == "leftTop")
+    //else if (circleCorner == "leftTop")
+    else if (thisCircle.x <= logoX && thisCircle.y <= logoY)
     {
       oldR = ((float)Math.pow(mouseX, 2) + (float)Math.pow(mouseY, 2));
       newR = ((float)Math.pow(pmouseX, 2) + (float)Math.pow(pmouseY, 2));
@@ -504,11 +500,144 @@ void mouseDragged()
     
     
     percentChange = (float)(newR/oldR);
-  
+    //float deltaXY = (float)Math.abs(Math.sqrt(oldR) - Math.sqrt(newR));
+    
+    //if (percentChange > 0) //increasing size
+    //{
+    //  //if (circleCorner == "rightBottom")
+    //  if (thisCircle.x >= logoX && thisCircle.y >= logoY)
+    //  {
+    //    logoX += deltaXY;
+    //    logoY += deltaXY;
+    //  }
+    //  //else if (circleCorner == "rightTop")
+    //  else if (thisCircle.x >= logoX && thisCircle.y <= logoY)
+    //  {
+    //    logoX -= deltaXY;
+    //    logoY += deltaXY;
+    //  }
+    //  //else if (circleCorner == "leftBottom")
+    //  else if (thisCircle.x <= logoX && thisCircle.y >= logoY)
+    //  {
+    //    logoX -= deltaXY;
+    //    logoY += deltaXY;
+    //  }
+    //  //else if (circleCorner == "leftTop")
+    //  else if (thisCircle.x <= logoX && thisCircle.y <= logoY)
+    //  {
+    //    logoX -= deltaXY;
+    //    logoY -= deltaXY;
+    //  }
+    //}
+    //else
+    //{
+    //  //if (circleCorner == "rightBottom")
+    //  if (thisCircle.x >= logoX && thisCircle.y >= logoY)
+    //  {
+    //    logoX -= deltaXY;
+    //    logoY -= deltaXY;
+    //  }
+    //  //else if (circleCorner == "rightTop")
+    //  else if (thisCircle.x >= logoX && thisCircle.y <= logoY)
+    //  {
+    //    logoX += deltaXY;
+    //    logoY -= deltaXY;
+    //  }
+    //  //else if (circleCorner == "leftBottom")
+    //  else if (thisCircle.x <= logoX && thisCircle.y >= logoY)
+    //  {
+    //    logoX += deltaXY;
+    //    logoY -= deltaXY;
+    //  }
+    //  //else if (circleCorner == "leftTop")
+    //  else if (thisCircle.x <= logoX && thisCircle.y <= logoY)
+    //  {
+    //    logoX += deltaXY;
+    //    logoY += deltaXY;
+    //  }
+    //}
+    
+    //float oldX = logoX;
+    //float oldY = logoY;
+    //println("old " + logoX);
     //logoZ = constrain(logoZ+percentChange, .01, inchToPix(4f)); //leave min and max alone!
     logoZ = constrain(logoZ*(float)Math.pow(percentChange, 4), .01, inchToPix(4f)); //leave min and max alone!
-
-  }
+    
+    //float circleDist = (float)(Math.sqrt((float)Math.pow(logoZ / 2.0, 2) + (float)Math.pow(logoZ / 2.0, 2)));
+  
+    //float oldX = circles.get(0).x;
+    //float oldY = circles.get(0).y;
+    
+    //float newX = logoX + circleDist * (float)Math.sin(radians(logoRotation - 45));
+    //float newY = logoY - circleDist * (float)Math.cos(radians(logoRotation - 45));
+    
+    //logoX += oldX - newX;  
+    //logoY -= oldY - newY;
+    
+    //float oldX = circles.get(2).x;
+    //float oldY = circles.get(2).y;
+    
+    //float newX = logoX + circleDist * (float)Math.cos(radians(logoRotation - 45));
+    //float newY = logoY + circleDist * (float)Math.sin(radians(logoRotation - 45));
+    
+    //logoX += newX - oldX;  
+    //logoY -= oldY - newY;
+    
+    //Circle leftTop = new Circle(logoX + circleDist * (float)Math.sin(radians(logoRotation - 45)), logoY - circleDist * (float)Math.cos(radians(logoRotation - 45)), "leftTop");
+    //Circle leftBottom = new Circle(logoX - circleDist * (float)Math.sin(radians(logoRotation + 45)), logoY + circleDist * (float)Math.cos(radians(logoRotation + 45)), "leftBottom");
+    //Circle rightTop = new Circle(logoX + circleDist * (float)Math.cos(radians(logoRotation - 45)), logoY + circleDist * (float)Math.sin(radians(logoRotation - 45)), "rightTop");
+    //Circle rightBottom = new Circle(logoX + circleDist * (float)Math.cos(radians(logoRotation + 45)), logoY + circleDist * (float)Math.sin(radians(logoRotation + 45)), "rightBottom");
+  
+  
+    
+    //logoX = logoX + (logoZ / 2.0) * (float)Math.sin(radians(logoRotation));
+    //logoY = logoY - (logoZ / 2.0) * (float)Math.cos(radians(logoRotation));
+  
+    //logoX += logoZ / 2.0;
+    //logoY -= logoZ / 2.0;
+    //println("X: "+logoX+" Y: "+logoY+" Z: "+logoZ);
+    //if (canDragCorners)
+    //{
+    //  logoX += logoZ / 2.0;
+    //  logoY -= logoZ / 2.0;
+    //}
+    //println("Circle "+thisCircle.x);
+    //logoX = logoX/(float)Math.pow(percentChange, 0.5);
+    //logoY = logoY/(float)Math.pow(percentChange, 0.5);
+    //logoX = oldX;
+    //logoY = oldY;
+    
+    
+    //float circleDist = (float)(Math.sqrt((float)Math.pow(logoZ / 2.0, 2) + (float)Math.pow(logoZ / 2.0, 2)));
+    
+      //if (circleCorner == "rightBottom")
+    //  if (thisCircle.x >= logoX && thisCircle.y >= logoY)
+    //  {
+    //    logoX = logoX + circleDist * (float)Math.cos(radians(logoRotation + 45)) - logoZ / 2.0;
+    //    logoY = logoY + circleDist * (float)Math.sin(radians(logoRotation + 45)) - logoZ / 2.0;
+    //  }
+    //  //else if (circleCorner == "rightTop")
+    //  else if (thisCircle.x >= logoX && thisCircle.y <= logoY)
+    //  {
+    //    logoX = logoX + circleDist * (float)Math.cos(radians(logoRotation - 45)) - logoZ / 2.0;
+    //    logoY = logoY + circleDist * (float)Math.sin(radians(logoRotation - 45)) + logoZ / 2.0;
+    //  }
+    //  //else if (circleCorner == "leftBottom")
+    //  else if (thisCircle.x <= logoX && thisCircle.y >= logoY)
+    //  {
+    //    logoX = logoX - circleDist * (float)Math.sin(radians(logoRotation + 45)) + logoZ / 2.0;
+    //    logoY = logoY + circleDist * (float)Math.cos(radians(logoRotation + 45)) - logoZ / 2.0;
+    //  }
+    //  //else if (circleCorner == "leftTop")
+    //  else if (thisCircle.x <= logoX && thisCircle.y <= logoY)
+    //  {
+    //    logoX = logoX + circleDist * (float)Math.sin(radians(logoRotation - 45)) + logoZ / 2.0;
+    //    logoY = logoY - circleDist * (float)Math.cos(radians(logoRotation - 45)) + logoZ / 2.0;
+    //  }
+    //}
+    
+    
+}
   
   if (canDragButton)
   {
@@ -538,7 +667,7 @@ void mouseDragged()
     //else
     //  res = resQ3;
     
-    if (dy <= 0)
+    if (dy < 0)
       res = resQ1;
     else
       //res = Math.pi
@@ -559,8 +688,10 @@ void mouseDragged()
       c.rotation = degrees(res);
     logoRotation = degrees(res);
     println("rotation (deg): "+logoRotation);
+  }  
+  
   }
-}
+  
 
 
 boolean insideLogo (int x, int y)
@@ -571,7 +702,9 @@ boolean insideLogo (int x, int y)
 boolean insideBorder (int x, int y)
 {
   //return (x >= border && x <= (width - border) && y >= border && y <= (height - border));
-  return (x >= logoZ && x <= (width - logoZ) && y >= logoZ && y <= (height - logoZ));
+  //return (x >= logoZ / 2.0 && x <= (width - logoZ / 2.0) && y >= logoZ / 2.0 && y <= (height - logoZ / 2.0));
+  return (x >= logoZ  && x <= (width - logoZ) && y >= logoZ && y <= (height - logoZ));
+  //return (x > 0 && x < width && y > 0 && y < height);
 }
 
 boolean insideCircle (int x, int y, Circle c)
