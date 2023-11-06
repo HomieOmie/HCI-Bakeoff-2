@@ -12,6 +12,15 @@ int startTime = 0; // time starts when the first click is captured
 int finishTime = 0; //records the time of the final click
 boolean userDone = false; //is the user done
 
+// Slider background and Slider Handle positioning variables
+float sliderPosX;
+float sliderPosY;
+float sliderDiam;
+float handlePosX;
+float handlePosY;
+float handleDiam;
+boolean draggingSlider;
+
 final int screenPPI = 72; //what is the DPI of the screen you are using
 //you can test this by drawing a 72x72 pixel rectangle in code, and then confirming with a ruler it is 1x1 inch. 
 
@@ -52,7 +61,20 @@ void setup() {
     destinations.add(d);
     println("created target with " + d.x + "," + d.y + "," + d.rotation + "," + d.z);
   }
-
+  
+  // Slider position init on bottom left of the screen
+  sliderPosX = width / 4 - 20;
+  sliderPosY = height - inchToPix(0.2);
+  sliderDiam = width / 3 + width / 11;
+  
+  // Slider handle position init (Should be based on slider coords to keep the handle overlapped on the Slider background; middle of slider initially)
+  handlePosX = sliderPosX;
+  handlePosY = sliderPosY;
+  handleDiam = sliderDiam / 14;
+  
+  // Boolean to let the program know if the user is sliding the handle while moving the mouse or not
+  draggingSlider = false;
+  
   Collections.shuffle(destinations); // randomize the order of the button; don't change this.
 }
 
@@ -104,6 +126,14 @@ void draw() {
   fill(255);
   scaffoldControlLogic(); //you are going to want to replace this!
   text("Trial " + (trialIndex+1) + " of " +trialCount, width/2, inchToPix(.8f));
+  
+  // Draw Slider
+  fill(128);
+  rect(sliderPosX, sliderPosY, sliderDiam, inchToPix(0.2));
+  
+  // Draw handle
+  fill(0,0,255);
+  rect(handlePosX, handlePosY, handleDiam, inchToPix(0.2));
 }
 
 //my example design for control, which is terrible
@@ -119,15 +149,15 @@ void scaffoldControlLogic()
   if (mousePressed && dist(width, 0, mouseX, mouseY)<inchToPix(.8f))
     logoRotation++;
 
-  //lower left corner, decrease Z
-  text("-", inchToPix(.4f), height-inchToPix(.4f));
-  if (mousePressed && dist(0, height, mouseX, mouseY)<inchToPix(.8f))
-    logoZ = constrain(logoZ-inchToPix(.02f), .01, inchToPix(4f)); //leave min and max alone!
+  ////lower left corner, decrease Z
+  //text("-", inchToPix(.4f), height-inchToPix(.4f));
+  //if (mousePressed && dist(0, height, mouseX, mouseY)<inchToPix(.8f))
+  //  logoZ = constrain(logoZ-inchToPix(.02f), .01, inchToPix(4f)); //leave min and max alone!
 
-  //lower right corner, increase Z
-  text("+", width-inchToPix(.4f), height-inchToPix(.4f));
-  if (mousePressed && dist(width, height, mouseX, mouseY)<inchToPix(.8f))
-    logoZ = constrain(logoZ+inchToPix(.02f), .01, inchToPix(4f)); //leave min and max alone! 
+  ////lower right corner, increase Z
+  //text("+", width-inchToPix(.4f), height-inchToPix(.4f));
+  //if (mousePressed && dist(width, height, mouseX, mouseY)<inchToPix(.8f))
+  //  logoZ = constrain(logoZ+inchToPix(.02f), .01, inchToPix(4f)); //leave min and max alone! 
 
   //left middle, move left
   text("left", inchToPix(.4f), height/2);
@@ -142,8 +172,8 @@ void scaffoldControlLogic()
   if (mousePressed && dist(width/2, 0, mouseX, mouseY)<inchToPix(.8f))
     logoY-=inchToPix(.02f);
 
-  text("down", width/2, height-inchToPix(.4f));
-  if (mousePressed && dist(width/2, height, mouseX, mouseY)<inchToPix(.8f))
+  text("down", width/2 + width / 4, height-inchToPix(.4f));
+  if (mousePressed && dist(width/2 + width / 4, height, mouseX, mouseY)<inchToPix(.8f))
     logoY+=inchToPix(.02f);
 }
 
@@ -153,6 +183,23 @@ void mousePressed()
   {
     startTime = millis();
     println("time started!");
+  }
+  // Let's the program know if the user is clicking on the handle to drage the slider, then sets the boolean to true for the mouseDragged() function to handle
+  if (mouseX > handlePosX - handleDiam && mouseX < handlePosX + handleDiam && mouseY > handlePosY - inchToPix(0.2) && mouseY < handlePosY + inchToPix(0.2)) {
+    draggingSlider = true;
+  }
+  else {
+    draggingSlider = false;
+  }
+}
+
+void mouseDragged() {
+  if (draggingSlider) {
+    // Moves the Slider handle based on the mouse position but has a constraint to prevent handle from going off of the Slider background
+    handlePosX = constrain(mouseX, sliderPosX - sliderDiam / 2, sliderPosX + sliderDiam / 2);
+
+    // Adjust the square size based on the slider position
+    logoZ = map(handlePosX, sliderPosX - sliderDiam / 2, sliderPosX + sliderDiam / 2, 0.01, inchToPix(4.0));
   }
 }
 
