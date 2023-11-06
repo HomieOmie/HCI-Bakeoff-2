@@ -19,6 +19,7 @@ float lastClickTime = 0;
 float rotationX0 = 0;
 float rotationY0 = 0;
 boolean showErrorMessage = false;
+boolean closeEnough = false;
 Circle thisCircle;
 
 float oldLogoX = 0;
@@ -141,7 +142,10 @@ void draw() {
   }
 
   //===========DRAW LOGO SQUARE=================
-  
+  if (checkForSuccess())
+    closeEnough = true;
+  else
+    closeEnough = false;
   
   if (movingMode && insideBorder (mouseX, mouseY))
   {
@@ -156,7 +160,10 @@ void draw() {
   translate(logoX, logoY); //translate draw center to the center oft he logo square
   rotate(radians(logoRotation)); //rotate using the logo square as the origin
   noStroke();
-  fill(60, 60, 192, 192);
+  if (closeEnough)
+    fill(#35C447);
+  else
+    fill(60, 60, 192, 192);
   rect(0, 0, logoZ, logoZ);
   popMatrix();
 
@@ -364,26 +371,33 @@ void mousePressed()
   //print("Time"+millis());
   //print("lastClickTime"+lastClickTime);
   float thisClickTime = millis();
-  if (thisClickTime - lastClickTime <= doubleClickSpeed && insideLogo(mouseX, mouseY))
+  
+  if (thisClickTime - lastClickTime <= doubleClickSpeed)
   {
-    print("Done");
-    if (userDone==false && !checkForSuccess())
+    if (insideLogo(mouseX, mouseY))
     {
-      errorCount++;
-      showErrorMessage = true;
+      print("Done");
+      
+      if (userDone==false && !checkForSuccess())
+      {
+        errorCount++;
+        showErrorMessage = true;
+      }
+      else if (userDone==false && checkForSuccess())
+        showErrorMessage = false;
+  
+      trialIndex++; //and move on to next trial
+  
+      if (trialIndex==trialCount && userDone==false)
+      {
+        userDone = true;
+        finishTime = millis();
+      }
     }
-    else if (userDone==false && checkForSuccess())
-      showErrorMessage = false;
-
-    trialIndex++; //and move on to next trial
-
-    if (trialIndex==trialCount && userDone==false)
-    {
-      userDone = true;
-      finishTime = millis();
-    }
+    lastClickTime = 0;
   }
-  lastClickTime = thisClickTime;
+  else
+    lastClickTime = thisClickTime;
   
   if (circles.isEmpty())
     print("circles Empty");
@@ -559,14 +573,17 @@ void mouseDragged()
         {
           logoX -= Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.cos(radians(logoRotation + 45));
           logoY += Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.sin(radians(logoRotation + 45));
+          //println("dcr");
         }
         else
         {
-          logoX += Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.cos(radians(logoRotation - 45));
-          logoY += Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.sin(radians(logoRotation - 45));
+          logoX += Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.sin(radians(logoRotation + 45));
+          logoY -= Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.cos(radians(logoRotation + 45));
+          //println("incr");
         }
           //logoX += d/2.0;
           //logoY -= d/2.0;
+          //println("rotation"+logoRotation);
       }
     }
     //else if (circleCorner == "leftBottom")
