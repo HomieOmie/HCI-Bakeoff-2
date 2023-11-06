@@ -528,8 +528,16 @@ void mouseDragged()
       logoZ = constrain(logoZ+d, .01, inchToPix(4f));
       if (logoZ > .01 && logoZ < inchToPix(4f))
       {
-          logoX += d/2.0 * (float)Math.cos(radians(logoRotation + 45));
-          logoY += d/2.0 * (float)Math.sin(radians(logoRotation + 45));
+        if (d < 0)
+        {
+          logoX -= Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.cos(radians(logoRotation - 45));
+          logoY += Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.sin(radians(logoRotation - 45));
+        }
+        else
+        {
+          logoX += Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.cos(radians(logoRotation + 45));
+          logoY += Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.sin(radians(logoRotation + 45));
+        }
       }
       
       //rotateButton.x = logoX + (logoZ) * (float)Math.sin(radians(logoRotation));
@@ -547,8 +555,16 @@ void mouseDragged()
       logoZ = constrain(logoZ+d, .01, inchToPix(4f));
       if (logoZ > .01 && logoZ < inchToPix(4f))
       {
+        if (d < 0)
+        {
+          logoX -= Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.cos(radians(logoRotation + 45));
+          logoY += Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.sin(radians(logoRotation + 45));
+        }
+        else
+        {
           logoX += Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.cos(radians(logoRotation - 45));
           logoY += Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.sin(radians(logoRotation - 45));
+        }
           //logoX += d/2.0;
           //logoY -= d/2.0;
       }
@@ -565,8 +581,16 @@ void mouseDragged()
       logoZ = constrain(logoZ+d, .01, inchToPix(4f));
       if (logoZ > .01 && logoZ < inchToPix(4f))
       {
-          logoX -= d/2.0 * (float)Math.sin(radians(logoRotation + 45));
-          logoY += d/2.0 * (float)Math.cos(radians(logoRotation + 45));
+        if (d < 0)
+        {
+          logoX -= Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.sin(radians(logoRotation - 45));
+          logoY -= Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.cos(radians(logoRotation - 45));
+        }
+        else
+        {
+          logoX -= Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.sin(radians(logoRotation + 45));
+          logoY += Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.cos(radians(logoRotation + 45));
+        }
       }
     }
     //else if (circleCorner == "leftTop")
@@ -582,8 +606,16 @@ void mouseDragged()
       logoZ = constrain(logoZ+d, .01, inchToPix(4f));
       if (logoZ > .01 && logoZ < inchToPix(4f))
       {
-          logoX -= d/2.0 * (float)Math.sin(radians(logoRotation - 45));
-          logoY -= d/2.0 * (float)Math.cos(radians(logoRotation - 45));
+        if (d < 0)
+        {
+          logoX += Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.sin(radians(logoRotation + 45));
+          logoY += Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.cos(radians(logoRotation + 45));
+        }
+        else
+        {
+          logoX += Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.sin(radians(logoRotation - 45));
+          logoY -= Math.sqrt(Math.pow(d/2.0, 2)+Math.pow(d/2.0, 2)) * (float)Math.cos(radians(logoRotation - 45));
+        }
       }
     }
     
