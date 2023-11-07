@@ -60,12 +60,36 @@ boolean posCorrect = false;
 boolean xCorrect = false;
 boolean yCorrect = false;
 
-boolean followMouse = false;
+boolean followMouse = false; //used to determine click and drag of logo
 
-float submitX = 975;
-float submitY = 400;
+//float width;
+//float height;
+float width = 1000;
+float height = 800;
+
+//float submitX = 975;
+//float submitY = 400;
+float submitX;
+float submitY;
 float submitWidth = 100;
 float submitHeight = 200;
+
+
+
+private class Circle
+{
+  float x, y; //center x and y of circle
+  float r = 15;
+  float rotation = 0;
+  String name = "";
+  
+  Circle (float x, float y, String name)
+  {
+    this.x = x;
+    this.y = y;
+    this.name = name;
+  }
+}
 // ******************** Added End
 
 private class Destination
@@ -79,7 +103,12 @@ private class Destination
 ArrayList<Destination> destinations = new ArrayList<Destination>();
 
 void setup() {
-  size(1000, 800);  
+  fullScreen();
+  submitX = width - 150;
+  submitY = height + 50;
+  //size(1000, 800);  
+  //width = 1000;
+  //height = 800;
   rectMode(CENTER);
   textFont(createFont("Arial", inchToPix(.3f))); //sets the font to Arial that is 0.3" tall
   textAlign(CENTER);
@@ -110,7 +139,7 @@ void setup() {
   
   // ZSlider position init on bottom of the screen
   ZSliderPosX = width / 2;
-  ZSliderPosY = height - sliderHeight/2;
+  ZSliderPosY = height;
 
   // ZSlider ZHandle position init (Should be based on ZSlider coords to keep the ZHandle overlapped on the ZSlider background; middle of ZSlider initially)
   ZHandlePosX = ZSliderPosX;
@@ -118,7 +147,8 @@ void setup() {
   
   // ZSlider position init on bottom of the screen
   RotSliderPosX = width / 2;
-  RotSliderPosY = sliderHeight/2;
+  //RotSliderPosY = sliderHeight/2;
+  RotSliderPosY = height + sliderHeight + 30;
 
   // RotSlider RotHandle position init
   RotHandlePosX = RotSliderPosX;
@@ -141,9 +171,16 @@ void draw() {
   noStroke();
 
   // ******************** Added Start
-  if (followMouse) {
-     logoX = mouseX;
-     logoY = mouseY;
+  //if (followMouse) {
+  //   logoX = mouseX;
+  //   logoY = mouseY;
+  //}
+  if (followMouse && insideBorder (mouseX, mouseY))
+  {
+    int deltaX = mouseX - pmouseX;
+    logoX += deltaX;
+    int deltaY = mouseY - pmouseY;
+    logoY += deltaY;
   }
   // ******************** Added End
 
@@ -266,11 +303,13 @@ void scaffoldControlLogic()
 void mousePressed()
 {
   // ******************** Added Start
+  if (insideLogo (mouseX, mouseY))
+    followMouse = true;
   currX = mouseX;
   currY = mouseY;
-  if (mouseX >= logoX - logoZ && mouseX <= logoX + logoZ && mouseY >= logoY - logoZ && mouseY <= logoY + logoZ) {
-    followMouse = !followMouse;
-  }
+  //if (mouseX >= logoX - logoZ && mouseX <= logoX + logoZ && mouseY >= logoY - logoZ && mouseY <= logoY + logoZ) {
+  //  //followMouse = !followMouse;
+  //}
   // Let's the program know if the user is clicking on the ZHandle to drage the ZSlider, then sets the boolean to true for the mouseDragged() function to ZHandle
   if (mouseX > ZHandlePosX - handleDiam && mouseX < ZHandlePosX + handleDiam && mouseY > ZHandlePosY - handleHeight && mouseY < ZHandlePosY + handleHeight) {
     draggingZSlider = true;
@@ -313,6 +352,7 @@ void mousePressed()
 
 void mouseReleased()
 {
+  followMouse = false;
   //check to see if user clicked middle of screen within 3 inches, which this code uses as a submit button
   if (mouseX >= submitX - submitWidth && mouseX <= submitX + submitWidth 
       && mouseY >= submitY - submitHeight && mouseY <= submitY + submitHeight)
@@ -382,6 +422,45 @@ void mouseDragged() {
    
   currX = mouseX; 
   currY = mouseY; 
+}
+
+//boolean insideLogo (int x, int y)
+//{
+//  return (x >= (logoX - logoZ / 2.0) && x < (logoX + logoZ / 2.0) && y >= (logoY - logoZ / 2.0) && y < (logoY + logoZ / 2.0));
+//}
+
+boolean insideLogo (int x, int y)
+{
+  //float r = Math.sqrt(Math.pow(logoZ / 2.0, 2) + Math.pow(logoZ / 2.0, 2));
+  //return (x >= (logoX - logoZ / 2.0) && x < (logoX + logoZ / 2.0) && y >= (logoY - logoZ / 2.0) && y < (logoY + logoZ / 2.0));
+     
+  float circleDist = (float)(Math.sqrt((float)Math.pow(logoZ / 2.0 + 20, 2) + (float)Math.pow(logoZ / 2.0 + 20, 2)));
+
+  
+  Circle leftTop = new Circle(logoX + circleDist * (float)Math.sin(radians(logoRotation - 45)), logoY - circleDist * (float)Math.cos(radians(logoRotation - 45)), "leftTop");
+  Circle leftBottom = new Circle(logoX - circleDist * (float)Math.sin(radians(logoRotation + 45)), logoY + circleDist * (float)Math.cos(radians(logoRotation + 45)), "leftBottom");
+  Circle rightTop = new Circle(logoX + circleDist * (float)Math.cos(radians(logoRotation - 45)), logoY + circleDist * (float)Math.sin(radians(logoRotation - 45)), "rightTop");
+  Circle rightBottom = new Circle(logoX + circleDist * (float)Math.cos(radians(logoRotation + 45)), logoY + circleDist * (float)Math.sin(radians(logoRotation + 45)), "rightBottom");
+  
+  float[] xBounds = {leftTop.x, leftBottom.x, rightTop.x, rightBottom.x};
+  float[] yBounds = {leftTop.y, leftBottom.y, rightTop.y, rightBottom.y};  // Create an array of ints
+  float xMin = min(xBounds);
+  float xMax = max(xBounds);
+  float yMin = min(yBounds);
+  float yMax = max(yBounds);
+
+  return (xMin <= x && x <= xMax && yMin <= y && y <= yMax);
+
+}
+
+
+//helper function to see if mouseX, mouseY within screen border
+boolean insideBorder (int x, int y)
+{
+  //return (x >= border && x <= (width - border) && y >= border && y <= (height - border));
+  //return (x >= logoZ / 2.0 && x <= (width - logoZ / 2.0) && y >= logoZ / 2.0 && y <= (height - logoZ / 2.0));
+  //return (x >= logoZ  && x <= (width - logoZ) && y >= logoZ && y <= (height - logoZ));
+  return (x > 0 && x < width && y > 0 && y < height);
 }
 // ******************** Added End
 
