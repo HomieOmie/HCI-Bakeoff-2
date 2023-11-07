@@ -57,6 +57,8 @@ float currY = 0;
 boolean rotCorrect = false;
 boolean sizeCorrect = false;
 boolean posCorrect = false;
+boolean xCorrect = false;
+boolean yCorrect = false;
 
 boolean followMouse = false;
 
@@ -199,17 +201,25 @@ void draw() {
   //text("X: " + int(targetX) + " Y: " + int(targetY) + " rot: " + int(targetRot) + " size: " + int(targetSize), width/2, height/2);
   //text("X: " + int(logoX) + " Y: " + int(logoY) + " rot: " + int((logoRotation + 360) % 90) + " size: " + int(logoZ), width/2, height/2 + 20);
   
-  fill(0, 255, 0);
-  rect(submitX, submitY, submitWidth, submitHeight);
   
+  // Current location lines
   fill(255);
   stroke(255);
-  line(d.x, 0, d.x, height);
-  line(0, d.y, width, d.y);
+  line(logoX, 0, logoX, height);
+  line(0, logoY, width, logoY);
   noStroke();
   
   rotCorrect = calculateDifferenceBetweenAngles(d.rotation, logoRotation)<=5;
   sizeCorrect = abs(d.z - logoZ)<inchToPix(.1f); //has to be within +-0.1"
+  
+  // SUBMIT BUTTON
+  if (rotCorrect && sizeCorrect && posCorrect) {
+    fill(0, 255, 0);
+  } else {
+    fill(255, 0, 0); 
+  }
+  
+  rect(submitX, submitY, submitWidth, submitHeight);
   
   //===========DRAW ZSlider=================
   if (sizeCorrect)
@@ -267,6 +277,22 @@ void mousePressed()
   }
   else {
     draggingZSlider = false;
+  }
+  
+  if (mouseX > ZSliderPosX - sliderDiam/2 && mouseX <  ZSliderPosX + sliderDiam/2 && mouseY > ZSliderPosY - sliderHeight/2 && mouseY <  ZSliderPosY + sliderHeight/2){
+    // Moves the ZSlider ZHandle based on the mouse position but has a constraint to prevent ZHandle from going off of the ZSlider background
+    ZHandlePosX = constrain(mouseX, ZSliderPosX - sliderDiam / 2, ZSliderPosX + sliderDiam / 2);
+
+    // Adjust the square size based on the ZSlider position
+    setZByHandlePos(); 
+  }
+  
+  if (mouseX > RotSliderPosX - sliderDiam/2 && mouseX <  RotSliderPosX + sliderDiam/2 && mouseY > RotSliderPosY - sliderHeight/2 && mouseY <  RotSliderPosY + sliderHeight/2){
+    // Moves the RotSlider RotHandle based on the mouse position but has a constraint to prevent RotHandle from going off of the RotSlider background
+    RotHandlePosX = constrain(mouseX, RotSliderPosX - sliderDiam / 2, RotSliderPosX + sliderDiam / 2);
+
+    // Adjust the square size based on the RotSlider position
+    setRotByHandlePos(); 
   }
   
   // Let's the program know if the user is clicking on the ZHandle to drage the ZSlider, then sets the boolean to true for the mouseDragged() function to ZHandle
