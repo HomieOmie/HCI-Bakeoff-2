@@ -67,6 +67,10 @@ float submitY = 400;
 float submitWidth = 100;
 float submitHeight = 200;
 
+//float width;
+//float height;
+float width = 1000;
+float height = 800;
 
 private class Circle
 {
@@ -95,7 +99,10 @@ private class Destination
 ArrayList<Destination> destinations = new ArrayList<Destination>();
 
 void setup() {
-  size(1000, 800);  
+  fullScreen();
+  //size(1000, 800);  
+  //width = 1000;
+  //height = 800;
   rectMode(CENTER);
   textFont(createFont("Arial", inchToPix(.3f))); //sets the font to Arial that is 0.3" tall
   textAlign(CENTER);
