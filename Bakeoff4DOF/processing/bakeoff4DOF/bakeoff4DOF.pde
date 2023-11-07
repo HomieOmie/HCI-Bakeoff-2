@@ -62,15 +62,19 @@ boolean yCorrect = false;
 
 boolean followMouse = false; //used to determine click and drag of logo
 
-float submitX = 975;
-float submitY = 400;
-float submitWidth = 100;
-float submitHeight = 200;
-
 //float width;
 //float height;
 float width = 1000;
 float height = 800;
+
+//float submitX = 975;
+//float submitY = 400;
+float submitX;
+float submitY;
+float submitWidth = 100;
+float submitHeight = 200;
+
+
 
 private class Circle
 {
@@ -100,6 +104,8 @@ ArrayList<Destination> destinations = new ArrayList<Destination>();
 
 void setup() {
   fullScreen();
+  submitX = width - 150;
+  submitY = height + 50;
   //size(1000, 800);  
   //width = 1000;
   //height = 800;
@@ -133,7 +139,7 @@ void setup() {
   
   // ZSlider position init on bottom of the screen
   ZSliderPosX = width / 2;
-  ZSliderPosY = height - sliderHeight/2;
+  ZSliderPosY = height;
 
   // ZSlider ZHandle position init (Should be based on ZSlider coords to keep the ZHandle overlapped on the ZSlider background; middle of ZSlider initially)
   ZHandlePosX = ZSliderPosX;
@@ -141,7 +147,8 @@ void setup() {
   
   // ZSlider position init on bottom of the screen
   RotSliderPosX = width / 2;
-  RotSliderPosY = sliderHeight/2;
+  //RotSliderPosY = sliderHeight/2;
+  RotSliderPosY = height + sliderHeight + 30;
 
   // RotSlider RotHandle position init
   RotHandlePosX = RotSliderPosX;
