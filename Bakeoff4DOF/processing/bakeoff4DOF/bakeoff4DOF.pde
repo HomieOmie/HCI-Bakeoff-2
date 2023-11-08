@@ -188,10 +188,12 @@ void draw() {
   //}
   if (followMouse && insideBorder (mouseX, mouseY))
   {
-    int deltaX = mouseX - pmouseX;
-    logoX += deltaX;
-    int deltaY = mouseY - pmouseY;
-    logoY += deltaY;
+    //int deltaX = mouseX - pmouseX;
+    //logoX += deltaX;
+    //int deltaY = mouseY - pmouseY;
+    //logoY += deltaY;
+    logoX = mouseX;
+    logoY = mouseY;
   }
   // ******************** Added End
 
@@ -282,6 +284,11 @@ void draw() {
   else
     fill(255, 0, 0, 100); 
   rect(RotSliderPosX, RotSliderPosY, sliderDiam, sliderHeight);
+  
+  // Draw dashes for correct x and y location
+  fill(255, 255, 0);
+  rect(d.x, 0, 10, 100);
+  rect(0, d.y, 100, 10);
   
   // Move the correct Z indicator
   correctZPosX = map(d.z, 0.01, inchToPix(4.0), ZSliderPosX - sliderDiam / 2, ZSliderPosX + sliderDiam / 2);
@@ -478,10 +485,10 @@ boolean insideBorder (int x, int y)
 //probably shouldn't modify this, but email me if you want to for some good reason.
 public boolean checkForSuccess()
 {
-  Destination d = destinations.get(trialIndex);	
+  Destination d = destinations.get(trialIndex);  
   boolean closeDist = dist(d.x, d.y, logoX, logoY)<inchToPix(.05f); //has to be within +-0.05"
   boolean closeRotation = calculateDifferenceBetweenAngles(d.rotation, logoRotation)<=5;
-  boolean closeZ = abs(d.z - logoZ)<inchToPix(.1f); //has to be within +-0.1"	
+  boolean closeZ = abs(d.z - logoZ)<inchToPix(.1f); //has to be within +-0.1"  
 
   println("Close Enough Distance: " + closeDist + " (logo X/Y = " + d.x + "/" + d.y + ", destination X/Y = " + logoX + "/" + logoY +")");
   println("Close Enough Rotation: " + closeRotation + " (rot dist="+calculateDifferenceBetweenAngles(d.rotation, logoRotation)+")");
