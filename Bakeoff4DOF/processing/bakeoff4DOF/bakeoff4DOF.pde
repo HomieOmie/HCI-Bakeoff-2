@@ -57,6 +57,8 @@ float currY = 0;
 boolean rotCorrect = false;
 boolean sizeCorrect = false;
 boolean posCorrect = false;
+boolean posXCorrect = false;
+boolean posYCorrect = false;
 boolean xCorrect = false;
 boolean yCorrect = false;
 
@@ -233,6 +235,8 @@ void draw() {
   //===========DRAW LOGO SQUARE=================
   Destination d = destinations.get(trialIndex);  
   posCorrect = dist(d.x, d.y, logoX, logoY)<inchToPix(.05f); //has to be within +-0.05"
+  posXCorrect = abs(d.x - logoX)<inchToPix(.05f);
+  posYCorrect = abs(d.y - logoY)<inchToPix(.05f);
   pushMatrix();
   translate(logoX, logoY); //translate draw center to the center oft he logo square
   rotate(radians(logoRotation)); //rotate using the logo square as the origin
@@ -253,11 +257,29 @@ void draw() {
   
   
   // Current location lines
-  fill(255);
-  stroke(255);
-  line(logoX, 0, logoX, oldHeight);
-  line(0, logoY, width, logoY);
-  noStroke();
+  if (posXCorrect) {
+    fill(0,255,0);
+    stroke(0,255,0);
+    line(logoX, 0, logoX, oldHeight);
+    noStroke();
+  } else {
+    fill(255);
+    stroke(255);
+    line(logoX, 0, logoX, oldHeight);
+    noStroke();
+  }
+  
+  if (posYCorrect) {
+    fill(0,255,0);
+    stroke(0,255,0);
+    line(0, logoY, width, logoY);
+    noStroke();
+  } else {
+    fill(255);
+    stroke(255);
+    line(0, logoY, width, logoY);
+    noStroke();
+  }
   
   rotCorrect = calculateDifferenceBetweenAngles(d.rotation, logoRotation)<=5;
   sizeCorrect = abs(d.z - logoZ)<inchToPix(.1f); //has to be within +-0.1"
@@ -286,9 +308,21 @@ void draw() {
   rect(RotSliderPosX, RotSliderPosY, sliderDiam, sliderHeight);
   
   // Draw dashes for correct x and y location
-  fill(255, 255, 0);
-  rect(d.x, 0, 10, 100);
-  rect(0, d.y, 100, 10);
+  if (posXCorrect) {
+    fill(0,255,0);
+    rect(d.x, 0, 10, 100);
+  } else {
+    fill(255,255,0);
+    rect(d.x, 0, 10, 100);
+  }
+  
+  if (posYCorrect) {
+    fill(0,255,0);
+    rect(0, d.y, 100, 10);
+  } else {
+    fill(255, 255, 0);
+    rect(0, d.y, 100, 10);
+  }
   
   // Move the correct Z indicator
   correctZPosX = map(d.z, 0.01, inchToPix(4.0), ZSliderPosX - sliderDiam / 2, ZSliderPosX + sliderDiam / 2);
