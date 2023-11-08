@@ -64,15 +64,19 @@ boolean followMouse = false; //used to determine click and drag of logo
 
 //float width;
 //float height;
-float width = 1000;
-float height = 800;
+//float width = 1000;
+//float height = 800;
+
+float oldHeight = 800;
 
 //float submitX = 975;
 //float submitY = 400;
 float submitX;
 float submitY;
-float submitWidth = 100;
-float submitHeight = 200;
+float submitWidth;
+float submitHeight;
+//float submitWidth = 100;
+//float submitHeight = 200;
 
 
 
@@ -103,10 +107,8 @@ private class Destination
 ArrayList<Destination> destinations = new ArrayList<Destination>();
 
 void setup() {
-  fullScreen();
-  submitX = width - 150;
-  submitY = height + 50;
-  //size(1000, 800);  
+  //fullScreen();
+  size(1000, 1000);  
   //width = 1000;
   //height = 800;
   rectMode(CENTER);
@@ -121,7 +123,7 @@ void setup() {
   {
     Destination d = new Destination();
     d.x = random(border, width-border); //set a random x with some padding
-    d.y = random(border, height-border); //set a random y with some padding
+    d.y = random(border, oldHeight-border); //set a random y with some padding
     d.rotation = random(0, 360); //random rotation between 0 and 360
     int j = (int)random(20);
     d.z = ((j%12)+1)*inchToPix(.25f); //increasing size from .25 up to 3.0" 
@@ -132,14 +134,17 @@ void setup() {
   Collections.shuffle(destinations); // randomize the order of the button; don't change this.
   
   // Slider and handle sizes
-  sliderHeight = inchToPix(1.0);
+  //sliderHeight = inchToPix(1.0);
+  sliderHeight = inchToPix(.8);
   sliderDiam = width / 2;
   handleDiam = sliderDiam / 14;
   handleHeight = sliderHeight;
   
+  
+  
   // ZSlider position init on bottom of the screen
   ZSliderPosX = width / 2;
-  ZSliderPosY = height;
+  ZSliderPosY = oldHeight;
 
   // ZSlider ZHandle position init (Should be based on ZSlider coords to keep the ZHandle overlapped on the ZSlider background; middle of ZSlider initially)
   ZHandlePosX = ZSliderPosX;
@@ -148,7 +153,7 @@ void setup() {
   // ZSlider position init on bottom of the screen
   RotSliderPosX = width / 2;
   //RotSliderPosY = sliderHeight/2;
-  RotSliderPosY = height + sliderHeight + 30;
+  RotSliderPosY = (oldHeight) + sliderHeight + 30;
 
   // RotSlider RotHandle position init
   RotHandlePosX = RotSliderPosX;
@@ -160,6 +165,12 @@ void setup() {
   // Initialize logo size:
   setZByHandlePos();
   setRotByHandlePos();
+  
+  submitX = width - 150;
+  //submitY = height + 50;
+  submitY = RotSliderPosY - (sliderHeight + 30) / 2;
+  submitWidth = 100;
+  submitHeight = sliderHeight * 2 + 30;
 }
 
 
@@ -242,7 +253,7 @@ void draw() {
   // Current location lines
   fill(255);
   stroke(255);
-  line(logoX, 0, logoX, height);
+  line(logoX, 0, logoX, oldHeight);
   line(0, logoY, width, logoY);
   noStroke();
   
@@ -460,7 +471,7 @@ boolean insideBorder (int x, int y)
   //return (x >= border && x <= (width - border) && y >= border && y <= (height - border));
   //return (x >= logoZ / 2.0 && x <= (width - logoZ / 2.0) && y >= logoZ / 2.0 && y <= (height - logoZ / 2.0));
   //return (x >= logoZ  && x <= (width - logoZ) && y >= logoZ && y <= (height - logoZ));
-  return (x > 0 && x < width && y > 0 && y < height);
+  return (x > 0 && x < width && y > 0 && y < oldHeight);
 }
 // ******************** Added End
 
