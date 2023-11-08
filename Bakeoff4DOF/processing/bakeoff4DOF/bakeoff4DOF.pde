@@ -406,8 +406,8 @@ void mouseReleased()
 {
   followMouse = false;
   //check to see if user clicked middle of screen within 3 inches, which this code uses as a submit button
-  if (mouseX >= submitX - submitWidth && mouseX <= submitX + submitWidth 
-      && mouseY >= submitY - submitHeight && mouseY <= submitY + submitHeight)
+  if (mouseX >= submitX - submitWidth / 2.0 && mouseX <= submitX + submitWidth / 2.0
+      && mouseY >= submitY - submitHeight / 2.0 && mouseY <= submitY + submitHeight / 2.0)
   {
     if (userDone==false && !checkForSuccess())
       errorCount++;
