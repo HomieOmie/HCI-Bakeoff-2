@@ -260,12 +260,12 @@ void draw() {
   if (posXCorrect) {
     fill(0,255,0);
     stroke(0,255,0);
-    line(logoX, 0, logoX, oldHeight);
+    line(logoX, 0, logoX, oldHeight - sliderHeight / 2.0);
     noStroke();
   } else {
     fill(255);
     stroke(255);
-    line(logoX, 0, logoX, oldHeight);
+    line(logoX, 0, logoX, oldHeight - sliderHeight / 2.0);
     noStroke();
   }
   
@@ -312,7 +312,7 @@ void draw() {
     fill(0,255,0);
     rect(d.x, 0, 10, 100);
   } else {
-    fill(255,255,0);
+    fill(255,0,0);
     rect(d.x, 0, 10, 100);
   }
   
@@ -320,7 +320,7 @@ void draw() {
     fill(0,255,0);
     rect(0, d.y, 100, 10);
   } else {
-    fill(255, 255, 0);
+    fill(255, 0, 0);
     rect(0, d.y, 100, 10);
   }
   
