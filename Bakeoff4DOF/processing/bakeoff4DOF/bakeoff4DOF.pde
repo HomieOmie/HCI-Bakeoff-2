@@ -184,8 +184,6 @@ void draw() {
   background(40); //background is dark grey
   fill(200);
   noStroke();
-  fill(255,0,0);
-  rect(width/2,height/2, inchToPix(1f), inchToPix(1f));
 
   // ******************** Added Start
   //if (followMouse) {
