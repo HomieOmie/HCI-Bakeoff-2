@@ -125,7 +125,7 @@ void setup() {
   {
     Destination d = new Destination();
     d.x = random(border, width-border); //set a random x with some padding
-    d.y = random(border, height-border); //set a random y with some padding
+    d.y = random(border, oldHeight-border); //set a random y with some padding
     d.rotation = random(0, 360); //random rotation between 0 and 360
     
     d.z = inchToPix((float)random(1,12)/4.0f); //increasing size from .25" up to 3.0" 
@@ -147,7 +147,7 @@ void setup() {
   
   // ZSlider position init on bottom of the screen
   ZSliderPosX = width / 2;
-  ZSliderPosY = oldHeight;
+  ZSliderPosY = oldHeight + sliderHeight / 2;
 
   // ZSlider ZHandle position init (Should be based on ZSlider coords to keep the ZHandle overlapped on the ZSlider background; middle of ZSlider initially)
   ZHandlePosX = ZSliderPosX;
@@ -156,7 +156,7 @@ void setup() {
   // ZSlider position init on bottom of the screen
   RotSliderPosX = width / 2;
   //RotSliderPosY = sliderHeight/2;
-  RotSliderPosY = (oldHeight) + sliderHeight + 30;
+  RotSliderPosY = (oldHeight + sliderHeight / 2) + sliderHeight + 30;
 
   // RotSlider RotHandle position init
   RotHandlePosX = RotSliderPosX;
@@ -191,7 +191,7 @@ void draw() {
   //   logoX = mouseX;
   //   logoY = mouseY;
   //}
-  if (followMouse && insideBorder (mouseX, mouseY))
+  if (followMouse && insideBorder (mouseX, mouseY) && !draggingZSlider)
   {
     //int deltaX = mouseX - pmouseX;
     //logoX += deltaX;
@@ -260,6 +260,9 @@ void draw() {
   
   
   // Current location lines
+  //fill(255);
+  //stroke(0, 255, 0);
+  //line(0, oldHeight, width, oldHeight);
   if (posXCorrect) {
     fill(0,255,0);
     stroke(0,255,0);
@@ -366,7 +369,8 @@ void mousePressed()
   //  //followMouse = !followMouse;
   //}
   // Let's the program know if the user is clicking on the ZHandle to drage the ZSlider, then sets the boolean to true for the mouseDragged() function to ZHandle
-  if (mouseX > ZHandlePosX - handleDiam && mouseX < ZHandlePosX + handleDiam && mouseY > ZHandlePosY - handleHeight && mouseY < ZHandlePosY + handleHeight) {
+  //if (mouseX > ZHandlePosX - handleDiam && mouseX < ZHandlePosX + handleDiam && mouseY > ZHandlePosY - handleHeight && mouseY < ZHandlePosY + handleHeight) {
+  if (insideCircle(ZHandlePosX, ZHandlePosY, handleDiam)) {
     draggingZSlider = true;
   }
   else {
@@ -390,7 +394,8 @@ void mousePressed()
   }
   
   // Let's the program know if the user is clicking on the ZHandle to drage the ZSlider, then sets the boolean to true for the mouseDragged() function to ZHandle
-  if (mouseX > RotHandlePosX - handleDiam && mouseX < RotHandlePosX + handleDiam && mouseY > RotHandlePosY - handleHeight && mouseY < RotHandlePosY + handleHeight) {
+  //if (mouseX > RotHandlePosX - handleDiam && mouseX < RotHandlePosX + handleDiam && mouseY > RotHandlePosY - handleHeight && mouseY < RotHandlePosY + handleHeight) {
+  if (insideCircle(RotHandlePosX, RotHandlePosY, handleDiam)) {
     draggingRotSlider = true;
   }
   else {
@@ -515,8 +520,18 @@ boolean insideBorder (int x, int y)
   //return (x >= border && x <= (width - border) && y >= border && y <= (height - border));
   //return (x >= logoZ / 2.0 && x <= (width - logoZ / 2.0) && y >= logoZ / 2.0 && y <= (height - logoZ / 2.0));
   //return (x >= logoZ  && x <= (width - logoZ) && y >= logoZ && y <= (height - logoZ));
-  return (x > 0 && x < width && y > 0 && y < oldHeight);
+  //return (x > 0 && x < width && y > 0 && y < oldHeight - sliderHeight / 2.0 - (handleHeight + 20 - sliderHeight));
+  //return (x > 0 && x < width && y > 0 && y < oldHeight - sliderHeight / 2.0 - (handleHeight + 20 - sliderHeight) / 2.0);
+    return (x > 0 && x < width && y > 0 && y < oldHeight);
 }
+
+boolean insideCircle (float x, float y, float r)
+{
+  //float centerX = c.x + c.r;
+  //float centerY = c.y + c.r;
+  return Math.pow(mouseX - x, 2) + Math.pow(mouseY - y, 2) < Math.pow(r, 2);
+}
+
 // ******************** Added End
 
 //probably shouldn't modify this, but email me if you want to for some good reason.
