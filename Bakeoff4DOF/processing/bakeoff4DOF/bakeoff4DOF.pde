@@ -140,8 +140,9 @@ void setup() {
   //sliderHeight = inchToPix(1.0);
   sliderHeight = inchToPix(.3);
   sliderDiam = width / 2;
-  handleDiam = sliderDiam / 14;
+  //handleDiam = sliderDiam / 14;
   handleHeight = sliderHeight;
+  handleDiam = sliderHeight + 20;
   
   
   
@@ -370,7 +371,7 @@ void mousePressed()
   //}
   // Let's the program know if the user is clicking on the ZHandle to drage the ZSlider, then sets the boolean to true for the mouseDragged() function to ZHandle
   //if (mouseX > ZHandlePosX - handleDiam && mouseX < ZHandlePosX + handleDiam && mouseY > ZHandlePosY - handleHeight && mouseY < ZHandlePosY + handleHeight) {
-  if (insideCircle(ZHandlePosX, ZHandlePosY, handleDiam)) {
+  if (insideCircle(ZHandlePosX, ZHandlePosY, handleDiam / 2.0)) {
     draggingZSlider = true;
   }
   else {
@@ -395,7 +396,7 @@ void mousePressed()
   
   // Let's the program know if the user is clicking on the ZHandle to drage the ZSlider, then sets the boolean to true for the mouseDragged() function to ZHandle
   //if (mouseX > RotHandlePosX - handleDiam && mouseX < RotHandlePosX + handleDiam && mouseY > RotHandlePosY - handleHeight && mouseY < RotHandlePosY + handleHeight) {
-  if (insideCircle(RotHandlePosX, RotHandlePosY, handleDiam)) {
+  if (insideCircle(RotHandlePosX, RotHandlePosY, handleDiam / 2.0)) {
     draggingRotSlider = true;
   }
   else {
