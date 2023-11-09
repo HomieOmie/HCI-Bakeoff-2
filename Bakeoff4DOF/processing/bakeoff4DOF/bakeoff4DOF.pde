@@ -12,7 +12,7 @@ int startTime = 0; // time starts when the first click is captured
 int finishTime = 0; //records the time of the final click
 boolean userDone = false; //is the user done
 
-final int screenPPI = 72; //what is the DPI of the screen you are using
+final int screenPPI = 127; //what is the DPI of the screen you are using
 //you can test this by drawing a 72x72 pixel rectangle in code, and then confirming with a ruler it is 1x1 inch. 
 
 //These variables are for my example design. Your input code should modify/replace these!
@@ -69,7 +69,7 @@ boolean followMouse = false; //used to determine click and drag of logo
 //float width = 1000;
 //float height = 800;
 
-float oldHeight = 800;
+float oldHeight = 700;
 
 //float submitX = 975;
 //float submitY = 400;
@@ -110,7 +110,7 @@ ArrayList<Destination> destinations = new ArrayList<Destination>();
 
 void setup() {
   //fullScreen();
-  size(1000, 1000);  
+  size(1000, 840);  
   //width = 1000;
   //height = 800;
   rectMode(CENTER);
@@ -119,16 +119,17 @@ void setup() {
   rectMode(CENTER); //draw rectangles not from upper left, but from the center outwards
   
   //don't change this! 
-  border = inchToPix(2f); //padding of 1.0 inches
+  border = inchToPix(1f); //padding of 1.0 inches
 
   for (int i=0; i<trialCount; i++) //don't change this! 
   {
     Destination d = new Destination();
     d.x = random(border, width-border); //set a random x with some padding
-    d.y = random(border, oldHeight-border); //set a random y with some padding
+    d.y = random(border, height-border); //set a random y with some padding
     d.rotation = random(0, 360); //random rotation between 0 and 360
-    int j = (int)random(20);
-    d.z = ((j%12)+1)*inchToPix(.25f); //increasing size from .25 up to 3.0" 
+    
+    d.z = inchToPix((float)random(1,12)/4.0f); //increasing size from .25" up to 3.0" 
+    
     destinations.add(d);
     println("created target with " + d.x + "," + d.y + "," + d.rotation + "," + d.z);
   }
@@ -137,7 +138,7 @@ void setup() {
   
   // Slider and handle sizes
   //sliderHeight = inchToPix(1.0);
-  sliderHeight = inchToPix(.8);
+  sliderHeight = inchToPix(.3);
   sliderDiam = width / 2;
   handleDiam = sliderDiam / 14;
   handleHeight = sliderHeight;
@@ -182,6 +183,8 @@ void draw() {
   background(40); //background is dark grey
   fill(200);
   noStroke();
+  fill(255,0,0);
+  rect(width/2,height/2, inchToPix(1f), inchToPix(1f));
 
   // ******************** Added Start
   //if (followMouse) {
